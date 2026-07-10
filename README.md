@@ -3,10 +3,6 @@ A front-end web application that simulates AI-driven price forecasting for Apple
 
 This project was built as a portfolio piece to demonstrate front-end engineering, UI/UX design, and data-presentation skills using plain HTML, CSS, and JavaScript  **no frameworks or build tools required.**
 
-> **🚀 Live Demo:**(https://dimssrmdn01.github.io/ai-apple-price-predictor/)
-
-> *(Available once GitHub Pages is enabled-see Deployment section below)*
-
 ---
 
 ##  Table of Contents
