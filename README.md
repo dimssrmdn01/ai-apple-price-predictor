@@ -58,12 +58,12 @@ No network requests, backend server, or trained model are involved. This keeps t
 - **Google Fonts**: Inter for display and body text, IBM Plex Mono for numeric and data elements
 
 ## Project Structure
-
+```
 ai-apple-price-predictor/
 ├── index.html      Full application: markup, styles, and JavaScript logic
 ├── README.md       Project documentation
 └── LICENSE         MIT license
-
+```
 The entire application is intentionally kept in a single HTML file to make it trivial to run, review, and deploy.
 
 ## Getting Started
@@ -77,7 +77,7 @@ No dependencies, package manager, or build step are required. Any modern web bro
 Clone the repository and open the file directly:
 
 ```bash
-git clone https://github.com/<your-github-username>/ai-apple-price-predictor.git
+git clone https://github.com/dimssrmdn01/ai-apple-price-predictor.git
 cd ai-apple-price-predictor
 open index.html   # macOS; on Windows use "start index.html", on Linux use "xdg-open index.html"
 ```
@@ -97,7 +97,7 @@ The project is a static site, which makes GitHub Pages the simplest deployment t
 2. In the repository, go to **Settings → Pages**.
 3. Under "Source," select the `main` branch and the `/ (root)` folder, then save.
 4. After a short build delay, the site will be available at:
-   `https://<your-github-username>.github.io/ai-apple-price-predictor/`
+   `https://dimssrmdn01.github.io/ai-apple-price-predictor/`
 
 ## Model Comparison
 
