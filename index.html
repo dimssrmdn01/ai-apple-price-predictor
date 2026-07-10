@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Price AI | AI-Powered Forecasting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000000;
+    --bg-alt:#060608;
+    --card:#0d0d10;
+    --card-border:#1c1c20;
+    --text:#f5f5f7;
+    --text-dim:#98989d;
+    --text-faint:#5a5a5e;
+    --accent:#7c8cff;
+    --accent-glow:rgba(124,140,255,0.35);
+    --green:#30d158;
+    --red:#ff453a;
+    --mono:'IBM Plex Mono', monospace;
+    --sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--accent);color:#000;}
+
+  /* NAV */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 48px;
+    background:rgba(0,0,0,0.7);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-0.02em;}
+  .logo svg{width:20px;height:20px;fill:var(--text);}
+  .nav-links{display:flex;gap:36px;font-size:14px;color:var(--text-dim);}
+  .nav-links a{transition:color .2s;}
+  .nav-links a:hover{color:var(--text);}
+  .try-btn{
+    background:var(--text);color:#000;padding:10px 20px;border-radius:100px;
+    font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .try-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,255,255,0.15);}
+  @media(max-width:900px){.nav-links{display:none;}}
+
+  /* HERO */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;position:relative;padding:120px 24px 80px;
+    background:radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,140,255,0.15), transparent 70%);
+  }
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:0.15em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:20px;opacity:0;animation:fadeUp .8s ease forwards;
+  }
+  .hero h1{
+    font-size:clamp(42px,7vw,84px);font-weight:800;letter-spacing:-0.04em;line-height:1.02;
+    background:linear-gradient(180deg,#fff 20%,#9a9aa5 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    opacity:0;animation:fadeUp .8s ease .1s forwards;
+  }
+  .hero p{
+    margin-top:22px;font-size:19px;color:var(--text-dim);max-width:560px;line-height:1.5;
+    opacity:0;animation:fadeUp .8s ease .2s forwards;
+  }
+  .hero-ctas{margin-top:36px;display:flex;gap:14px;opacity:0;animation:fadeUp .8s ease .3s forwards;}
+  .btn-primary{
+    background:var(--text);color:#000;padding:14px 28px;border-radius:100px;font-weight:600;font-size:15px;
+    display:flex;align-items:center;gap:8px;transition:transform .2s;
+  }
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-secondary{
+    border:1px solid rgba(255,255,255,0.15);padding:14px 28px;border-radius:100px;font-weight:600;font-size:15px;
+    transition:border-color .2s, background .2s;
+  }
+  .btn-secondary:hover{border-color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.04);}
+
+  .hero-stats{
+    display:flex;gap:0;margin-top:72px;opacity:0;animation:fadeUp .8s ease .4s forwards;
+    border:1px solid var(--card-border);border-radius:20px;overflow:hidden;background:rgba(255,255,255,0.02);
+  }
+  .stat{padding:22px 36px;text-align:left;border-right:1px solid var(--card-border);}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:var(--mono);font-size:26px;font-weight:600;}
+  .stat .label{font-size:12px;color:var(--text-faint);margin-top:4px;text-transform:uppercase;letter-spacing:0.06em;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+  .scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:var(--text-faint);animation:bounce 2s infinite;}
+  @keyframes bounce{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,8px);}}
+
+  /* SECTION shared */
+  section{padding:120px 24px;position:relative;}
+  .section-inner{max-width:1120px;margin:0 auto;}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 64px;}
+  .section-eyebrow{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;}
+  .section-head h2{font-size:clamp(30px,4vw,46px);font-weight:800;letter-spacing:-0.03em;line-height:1.1;}
+  .section-head p{margin-top:16px;color:var(--text-dim);font-size:17px;line-height:1.6;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .card-grid.two{grid-template-columns:repeat(2,1fr);}
+  @media(max-width:800px){.card-grid,.card-grid.two{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:32px;
+    transition:border-color .3s, transform .3s;
+  }
+  .card:hover{border-color:rgba(124,140,255,0.4);transform:translateY(-4px);}
+  .card-icon{
+    width:44px;height:44px;border-radius:12px;background:rgba(124,140,255,0.12);
+    display:flex;align-items:center;justify-content:center;margin-bottom:20px;color:var(--accent);
+  }
+  .card h3{font-size:19px;font-weight:700;letter-spacing:-0.01em;margin-bottom:8px;}
+  .card p{font-size:14.5px;color:var(--text-dim);line-height:1.55;}
+
+  #about{background:var(--bg-alt);}
+
+  /* TECHNOLOGY / model table */
+  .model-table{
+    width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13.5px;
+    border:1px solid var(--card-border);border-radius:14px;overflow:hidden;
+  }
+  .model-table th,.model-table td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--card-border);}
+  .model-table th{color:var(--text-faint);font-weight:500;text-transform:uppercase;font-size:11px;letter-spacing:0.08em;background:rgba(255,255,255,0.02);}
+  .model-table tr:last-child td{border-bottom:none;}
+  .model-table tr.best{background:rgba(48,209,88,0.06);}
+  .model-table tr.best td:first-child{color:var(--green);font-weight:600;}
+  .model-table td:first-child{color:var(--text);font-weight:500;}
+  .table-wrap{overflow-x:auto;border-radius:14px;}
+
+  /* PREDICT */
+  #predict{background:var(--bg-alt);}
+  .predict-panel{
+    max-width:680px;margin:0 auto;background:var(--card);border:1px solid var(--card-border);
+    border-radius:24px;padding:40px;
+  }
+  .field{margin-bottom:22px;}
+  .field label{
+    display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);margin-bottom:10px;font-weight:500;
+  }
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  select,input[type=number]{
+    width:100%;background:#000;border:1px solid var(--card-border);border-radius:12px;
+    padding:14px 16px;color:var(--text);font-size:15px;font-family:var(--sans);
+    appearance:none;-webkit-appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2398989d' stroke-width='1.5' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 16px center;
+    transition:border-color .2s;
+  }
+  input[type=number]{cursor:text;background-image:none;}
+  select:focus,input:focus{outline:none;border-color:var(--accent);}
+
+  .generate-btn{
+    width:100%;padding:17px;border-radius:14px;background:var(--text);color:#000;
+    font-weight:700;font-size:15.5px;display:flex;align-items:center;justify-content:center;gap:8px;
+    position:relative;overflow:hidden;transition:transform .15s;
+    box-shadow:0 0 0 rgba(124,140,255,0);
+  }
+  .generate-btn:hover{transform:translateY(-1px);box-shadow:0 8px 30px var(--accent-glow);}
+  .generate-btn:active{transform:translateY(0);}
+  .generate-btn.loading{pointer-events:none;color:transparent;}
+  .spinner{
+    display:none;position:absolute;width:20px;height:20px;border:2.5px solid rgba(0,0,0,0.15);
+    border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;
+  }
+  .generate-btn.loading .spinner{display:block;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .result{
+    margin-top:28px;padding-top:28px;border-top:1px solid var(--card-border);
+    display:none;
+  }
+  .result.show{display:block;animation:fadeUp .5s ease forwards;}
+  .result-meta{display:flex;justify-content:space-between;font-size:13px;color:var(--text-faint);margin-bottom:22px;flex-wrap:wrap;gap:8px;}
+  .result-meta span{display:flex;align-items:center;gap:6px;}
+  .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+  .result-box{background:rgba(255,255,255,0.02);border:1px solid var(--card-border);border-radius:14px;padding:18px 20px;}
+  .result-box .rlabel{font-size:12px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+  .result-box .rvalue{font-family:var(--mono);font-size:24px;font-weight:600;}
+  .rvalue.pos{color:var(--green);}
+  .rvalue.neg{color:var(--red);}
+  .sub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+  .sub-box{text-align:center;}
+  .sub-box .rlabel{margin-bottom:6px;}
+  .sub-box .rvalue{font-size:17px;}
+  @media(max-width:520px){.sub-grid,.result-grid{grid-template-columns:1fr 1fr;}}
+
+  .chart-title{font-size:13px;color:var(--text-dim);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .chart-box{background:rgba(255,255,255,0.02);border:1px solid var(--card-border);border-radius:14px;padding:20px 16px 10px;}
+  .legend{display:flex;gap:18px;margin-top:8px;font-size:12px;color:var(--text-faint);justify-content:center;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .dot{width:8px;height:8px;border-radius:50%;}
+
+  footer{
+    padding:48px 24px;text-align:center;color:var(--text-faint);font-size:13px;
+    border-top:1px solid var(--card-border);
+  }
+  footer .logo{justify-content:center;margin-bottom:14px;}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <svg viewBox="0 0 24 24"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.27.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.336-1.36-3.348-2.8-1.377-1.98-2.55-5.02-2.55-7.9 0-4.66 3.03-7.14 5.99-7.14 1.51 0 2.79.99 3.72.99.87 0 2.32-1.05 4.02-1.05.65 0 3.02.06 4.52 2.28-3.62 2-3.04 6.98-.104 9.76z"/></svg>
+    Apple Price AI
+  </div>
+  <div class="nav-links">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#technology">Technology</a>
+    <a href="#features">Features</a>
+    <a href="#predict">Predict</a>
+  </div>
+  <a href="#predict" class="try-btn">Try Now →</a>
+</nav>
+
+<section class="hero" id="home">
+  <div class="eyebrow">Time-series forecasting, tuned for Apple</div>
+  <h1>Apple Price AI</h1>
+  <p>Prediksi harga produk Apple secara instan menggunakan lima model machine learning yang divalidasi terhadap data historis 6 tahun.</p>
+  <div class="hero-ctas">
+    <a href="#predict" class="btn-primary">Coba Prediksi →</a>
+    <a href="#technology" class="btn-secondary">Lihat Teknologi</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="num">5</div><div class="label">ML Models</div></div>
+    <div class="stat"><div class="num">94.9%</div><div class="label">Accuracy</div></div>
+    <div class="stat"><div class="num">24+</div><div class="label">Products</div></div>
+    <div class="stat"><div class="num">6</div><div class="label">Years Data</div></div>
+  </div>
+  <div class="scroll-hint">⌄</div>
+</section>
+
+<section id="about">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">About our system</div>
+      <h2>Cutting-edge forecasting, built on real data</h2>
+      <p>Sebuah platform time series forecasting yang didukung algoritma machine learning canggih untuk memprediksi harga produk Apple secara akurat.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+        </div>
+        <h3>AI-Powered</h3>
+        <p>Menggunakan 5 model machine learning tingkat lanjut — ARIMA, LSTM, Prophet, XGBoost, dan Random Forest — untuk hasil prediksi yang akurat.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg>
+        </div>
+        <h3>Real-Time Analysis</h3>
+        <p>Memproses ribuan titik data secara real-time untuk menghasilkan skor prediksi harga instan dengan tingkat kepercayaan tinggi.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10V6l8-4z"/></svg>
+        </div>
+        <h3>Proven Accuracy</h3>
+        <p>Diuji dan divalidasi secara ketat dengan metrik komprehensif termasuk RMSE, MAE, MAPE, dan skor R² untuk kehandalan model.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="technology">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">Technology</div>
+      <h2>Lima model, satu pemenang otomatis</h2>
+      <p>Setiap prediksi dievaluasi lintas lima model. Sistem otomatis memilih model dengan performa terbaik berdasarkan metrik error terendah.</p>
+    </div>
+    <div class="table-wrap">
+      <table class="model-table">
+        <thead>
+          <tr><th>Model</th><th>RMSE</th><th>MAE</th><th>MAPE</th><th>R²</th></tr>
+        </thead>
+        <tbody>
+          <tr class="best"><td>XGBoost</td><td>14.906634</td><td>10.503636</td><td>1.420909</td><td>0.948770</td></tr>
+          <tr><td>Random Forest</td><td>20.992757</td><td>16.159691</td><td>2.184153</td><td>0.898398</td></tr>
+          <tr><td>LSTM</td><td>62.030641</td><td>49.572189</td><td>6.702927</td><td>0.112739</td></tr>
+          <tr><td>Prophet</td><td>90.595417</td><td>74.716630</td><td>10.142177</td><td>-0.864283</td></tr>
+          <tr><td>ARIMA</td><td>99.780285</td><td>81.880075</td><td>11.325294</td><td>-1.261460</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">Features</div>
+      <h2>Semua yang dibutuhkan untuk prediksi harga</h2>
+    </div>
+    <div class="card-grid two">
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h3M13 12h3M8 16h3"/></svg>
+        </div>
+        <h3>Multiple Metrics</h3>
+        <p>Evaluasi RMSE, MAE, MAPE, dan R² untuk setiap model secara transparan.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <h3>Historical Data</h3>
+        <p>Analisis data harga historis selama 6 tahun untuk setiap produk.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+        </div>
+        <h3>Auto Selection</h3>
+        <p>Model terbaik dipilih otomatis berdasarkan skor error terendah.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09A1.65 1.65 0 0015 4.6a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <h3>Feature Engineering</h3>
+        <p>30+ fitur hasil rekayasa data untuk meningkatkan akurasi model.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="predict">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">Predict</div>
+      <h2>Price Prediction</h2>
+      <p>Dapatkan prediksi harga produk Apple secara instan dengan AI.</p>
+    </div>
+
+    <div class="predict-panel">
+      <div class="field">
+        <label>📱 Select Product</label>
+        <select id="product"></select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>📅 Period Type</label>
+          <select id="periodType">
+            <option value="day">Daily</option>
+            <option value="week">Weekly</option>
+            <option value="month" selected>Monthly</option>
+            <option value="year">Yearly</option>
+          </select>
+        </div>
+        <div class="field">
+          <label># Period Value</label>
+          <input type="number" id="periodValue" value="1" min="1" max="24">
+        </div>
+      </div>
+      <button class="generate-btn" id="generateBtn">
+        <span class="btn-label">✎ Generate Prediction</span>
+        <span class="spinner"></span>
+      </button>
+
+      <div class="result" id="result">
+        <div class="result-meta">
+          <span id="metaProduct">📱 —</span>
+          <span id="metaPeriod">📅 —</span>
+        </div>
+        <div class="result-grid">
+          <div class="result-box">
+            <div class="rlabel">Predicted Price</div>
+            <div class="rvalue" id="predictedPrice">$0.00</div>
+          </div>
+          <div class="result-box">
+            <div class="rlabel">Price Change</div>
+            <div class="rvalue" id="priceChange">$0.00</div>
+          </div>
+        </div>
+        <div class="sub-grid">
+          <div class="result-box sub-box">
+            <div class="rlabel">Current Price</div>
+            <div class="rvalue" id="currentPrice">$0.00</div>
+          </div>
+          <div class="result-box sub-box">
+            <div class="rlabel">Model Used</div>
+            <div class="rvalue" id="modelUsed">—</div>
+          </div>
+          <div class="result-box sub-box">
+            <div class="rlabel">Confidence</div>
+            <div class="rvalue" id="confidence">—</div>
+          </div>
+        </div>
+        <div class="chart-title">📈 Price Trend &amp; Forecast</div>
+        <div class="chart-box">
+          <svg id="chart" viewBox="0 0 600 220" style="width:100%;height:auto;"></svg>
+          <div class="legend">
+            <span><span class="dot" style="background:#f5f5f7"></span>Historical Price</span>
+            <span><span class="dot" style="background:#7c8cff"></span>Predicted Price</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">
+    <svg viewBox="0 0 24 24" width="18" height="18"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.27.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.336-1.36-3.348-2.8-1.377-1.98-2.55-5.02-2.55-7.9 0-4.66 3.03-7.14 5.99-7.14 1.51 0 2.79.99 3.72.99.87 0 2.32-1.05 4.02-1.05.65 0 3.02.06 4.52 2.28-3.62 2-3.04 6.98-.104 9.76z"/></svg>
+    Apple Price AI
+  </div>
+  Demo project · prediksi disimulasikan untuk tujuan ilustrasi, bukan saran investasi.
+</footer>
+
+<script>
+// ---------- Data ----------
+const PRODUCTS = [
+  {name:"iPhone 12 64GB", price:599},
+  {name:"iPhone 12 Pro 128GB", price:849},
+  {name:"iPhone 13 128GB", price:699},
+  {name:"iPhone 13 Pro Max 256GB", price:1199},
+  {name:"iPhone 14 128GB", price:799},
+  {name:"iPhone 14 Pro 128GB", price:999},
+  {name:"iPhone 15 128GB", price:799},
+  {name:"iPhone 15 Pro Max 256GB", price:1199},
+  {name:"iPhone 16 128GB", price:799},
+  {name:"iPhone 16 Pro 256GB", price:1099},
+  {name:"iPhone 17 128GB", price:798.21},
+  {name:"iPad (9th Gen) 64GB", price:329},
+  {name:"iPad Air (4th Gen) 64GB", price:599},
+  {name:"iPad Air (5th Gen) 64GB", price:599},
+  {name:"iPad Pro 11-inch (M1) 128GB", price:799},
+  {name:"iPad Pro 11-inch (M4) 256GB", price:999},
+  {name:"iPad Pro 12.9-inch (M2) 256GB", price:1199},
+  {name:"MacBook Air M2 256GB", price:1099},
+  {name:"MacBook Air M3 256GB", price:1099},
+  {name:"MacBook Pro 14-inch M1 Pro 512GB", price:1999},
+  {name:"MacBook Pro 14-inch M2 Pro 512GB", price:1999},
+  {name:"MacBook Pro 14-inch M3 Pro 512GB", price:1999},
+  {name:"MacBook Pro 14-inch M4 Pro 512GB", price:2199},
+];
+
+const MODELS = [
+  {name:"XGBoost", r2:0.94877, weight:5},
+  {name:"Random Forest", r2:0.89840, weight:3},
+  {name:"LSTM", r2:0.11274, weight:1},
+];
+
+const periodDays = {day:1, week:7, month:30, year:365};
+
+// seeded pseudo-random so results feel stable per product, not pure chaos
+function seedFrom(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){ h = (h<<5) - h + str.charCodeAt(i); h |= 0; }
+  return h;
+}
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+}
+
+// ---------- Populate select ----------
+const productSelect = document.getElementById('product');
+PRODUCTS.forEach((p,i)=>{
+  const opt = document.createElement('option');
+  opt.value = i; opt.textContent = p.name;
+  productSelect.appendChild(opt);
+});
+productSelect.value = PRODUCTS.findIndex(p=>p.name==="iPhone 13 Pro Max 256GB");
+
+// ---------- Historical series generator ----------
+function genHistory(basePrice, rand, points=7){
+  const series = [];
+  let v = basePrice * (0.97 + rand()*0.06); // start slightly off current
+  for(let i=0;i<points;i++){
+    series.push(v);
+    v = v + (rand()-0.45)*basePrice*0.01;
+  }
+  series[series.length-1] = basePrice; // last point = current price
+  return series;
+}
+
+// ---------- Chart drawing ----------
+function drawChart(history, predicted){
+  const svg = document.getElementById('chart');
+  const W = 600, H = 220, padL = 44, padR = 16, padT = 16, padB = 28;
+  const all = [...history, predicted];
+  const min = Math.min(...all) * 0.995;
+  const max = Math.max(...all) * 1.005;
+  const n = history.length;
+  const xStep = (W - padL - padR) / n;
+
+  const xOf = i => padL + i*xStep;
+  const yOf = v => padT + (1 - (v-min)/(max-min)) * (H - padT - padB);
+
+  let histPts = history.map((v,i)=>`${xOf(i)},${yOf(v)}`).join(' ');
+  const lastX = xOf(n-1), lastY = yOf(history[n-1]);
+  const predX = xOf(n), predY = yOf(predicted);
+
+  const gridLines = [];
+  for(let g=0; g<=3; g++){
+    const y = padT + g*(H-padT-padB)/3;
+    const val = max - g*(max-min)/3;
+    gridLines.push(`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#1c1c20" stroke-width="1"/>`);
+    gridLines.push(`<text x="4" y="${y+4}" font-size="10" fill="#5a5a5e" font-family="IBM Plex Mono, monospace">$${val.toFixed(0)}</text>`);
+  }
+
+  svg.innerHTML = `
+    ${gridLines.join('')}
+    <polyline points="${histPts}" fill="none" stroke="#f5f5f7" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="${lastX}" y1="${lastY}" x2="${predX}" y2="${predY}" stroke="#7c8cff" stroke-width="2.5" stroke-dasharray="5,4" stroke-linecap="round"/>
+    ${history.map((v,i)=>`<circle cx="${xOf(i)}" cy="${yOf(v)}" r="3" fill="#f5f5f7"/>`).join('')}
+    <circle cx="${predX}" cy="${predY}" r="5" fill="#7c8cff"/>
+    <circle cx="${predX}" cy="${predY}" r="9" fill="none" stroke="#7c8cff" stroke-width="1.5" opacity="0.5"/>
+  `;
+}
+
+// ---------- Generate prediction ----------
+const btn = document.getElementById('generateBtn');
+const resultEl = document.getElementById('result');
+
+btn.addEventListener('click', ()=>{
+  btn.classList.add('loading');
+  setTimeout(()=>{
+    btn.classList.remove('loading');
+    runPrediction();
+    resultEl.classList.add('show');
+    resultEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 750);
+});
+
+function runPrediction(){
+  const idx = parseInt(productSelect.value);
+  const product = PRODUCTS[idx];
+  const periodType = document.getElementById('periodType').value;
+  const periodValue = Math.max(1, parseInt(document.getElementById('periodValue').value || 1));
+  const days = periodDays[periodType] * periodValue;
+
+  const rand = mulberry32(seedFrom(product.name + '|' + Date.now()));
+  const history = genHistory(product.price, rand);
+
+  // pick model weighted toward XGBoost (mirrors "auto selection")
+  const model = MODELS[0]; // best model wins, as in original demo
+  const dailyDrift = (rand()-0.42) * 0.0009; // small realistic daily drift
+  const noise = (rand()-0.5) * 0.004;
+  const predicted = product.price * Math.pow(1+dailyDrift, days) * (1+noise);
+
+  const change = predicted - product.price;
+  const changePct = (change/product.price)*100;
+  const confidence = (model.r2*100*(0.99+rand()*0.02)).toFixed(1);
+
+  document.getElementById('metaProduct').textContent = `📱 ${product.name}`;
+  document.getElementById('metaPeriod').textContent = `📅 Forecast: ${periodValue} ${periodType}${periodValue>1?'s':''} ahead (${days} days)`;
+  document.getElementById('predictedPrice').textContent = `$${predicted.toFixed(2)}`;
+  const changeEl = document.getElementById('priceChange');
+  changeEl.textContent = `${change>=0?'+':''}$${change.toFixed(2)} (${change>=0?'+':''}${changePct.toFixed(1)}%)`;
+  changeEl.className = 'rvalue ' + (change>=0?'pos':'neg');
+  document.getElementById('currentPrice').textContent = `$${product.price.toFixed(2)}`;
+  document.getElementById('modelUsed').textContent = model.name;
+  document.getElementById('confidence').textContent = `${confidence}%`;
+
+  drawChart(history, predicted);
+}
+
+// run once on load with defaults
+runPrediction();
+</script>
+</body>
+</html>
