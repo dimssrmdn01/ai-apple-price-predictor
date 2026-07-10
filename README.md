@@ -1,6 +1,6 @@
 # 🍏 AI Apple Price Predictor
 
-> **🚀 Live Demo:** [AI Apple Price Predictor](https://dimssrmdn01.github.io/ai-apple-price-predictor/)
+> **🚀 Live Demo:**(https://dimssrmdn01.github.io/ai-apple-price-predictor/)
 > *(Available once GitHub Pages is enabled — see Deployment section below)*
 
 A front-end web application that simulates AI-driven price forecasting for Apple products. Users select a product (iPhone, iPad, or MacBook), specify a forecast period, and receive an instant predicted price along with a trend chart comparing historical and forecasted values.
